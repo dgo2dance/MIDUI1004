@@ -20,9 +20,9 @@ var globalConfig = {};
       }
     },
     online: {  // 线上
-      domain: ['wap.feekr.com'],
+      domain: ['joy1joy.com'],
       config: {
-        domain: 'http://wapi.feekr.com',  //  api接口domain
+        domain: 'http://joy1joy.com/FHMYSQL3',  //  api接口domain
         cookieDomain: '.feekr.com',
         host: 'wap.feekr.com'
       }
@@ -43,7 +43,10 @@ var globalConfig = {};
 // api接口
 var api = {
   slideThumb: '/strategy/slideThumb',  //首页轮播
-  indexList:'/userbasic/list',  //首页List展示
+  indexList:'/userbasic/indexList',  //首页List展示
+  personInfo:'/userbasic/personInfo',  //获取个人信息
+  like:'/like/savelike',  //点赞
+  love:'/love/saveLove',  //心动按钮
 };
 
 

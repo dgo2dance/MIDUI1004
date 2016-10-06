@@ -50,10 +50,23 @@ public class UserBasicService {
 	}
 	
 	/*
+	 * 修改
+	 */
+	public void editHeadImg(PageData pd)throws Exception{
+		dao.update("UserBasicMapper.editHeadImg", pd);
+	}
+	
+	/*
 	*列表
 	*/
 	public List<PageData> list(Page page)throws Exception{
 		return (List<PageData>)dao.findForList("UserBasicMapper.datalistPage", page);
+	}
+	/*
+	*首页列表
+	*/
+	public List<PageData> indexlist(Page page)throws Exception{
+		return (List<PageData>)dao.findForList("UserBasicMapper.indexdatalistPage", page);
 	}
 	
 	/*
@@ -69,7 +82,12 @@ public class UserBasicService {
 	public PageData findById(PageData pd)throws Exception{
 		return (PageData)dao.findForObject("UserBasicMapper.findById", pd);
 	}
-	
+		/*
+	* person详细页面通过ID获取相关信息
+	*/
+	public PageData findPersonById(PageData pd)throws Exception{
+		return (PageData)dao.findForObject("UserBasicMapper.findPersonById", pd);
+	}
 	/**
 	 * 获取当然登录人，如果为空表示未登录
 	 * @return

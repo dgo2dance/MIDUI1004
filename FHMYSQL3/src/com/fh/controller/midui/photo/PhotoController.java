@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONObject;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -164,6 +166,36 @@ public class PhotoController extends BaseController {
 		}						
 		return mv;
 	}	
+	
+	
+
+	/**
+	 * 批量删除
+	 */
+	@RequestMapping(value="/deleteByWall")
+	@ResponseBody
+	public Object deleteByWall() {
+		JSONObject jsonObject=new JSONObject();
+		jsonObject.put("statusCode","200");
+		
+		try {
+			PageData pd = this.getPageData();
+			String DATA_IDS = pd.getString("DATA_IDS");
+			if(null != DATA_IDS && !"".equals(DATA_IDS)){
+				String ArrayDATA_IDS[] = DATA_IDS.split(",");
+				photoService.deleteAll(ArrayDATA_IDS);
+			}
+			jsonObject.put("result","200");
+		} catch (Exception e) {
+			e.printStackTrace();
+			jsonObject.put("result","500");
+		}  
+		return jsonObject.toString();
+	}
+	
+	
+	
+	
 	
 	/**
 	 * 批量删除

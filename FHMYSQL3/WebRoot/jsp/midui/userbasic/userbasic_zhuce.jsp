@@ -305,7 +305,7 @@
                                         cache: false,
                                         success: function(data){
                                            //  $.alert('注册完成');
-                                           location.href = '<%=basePath%>/userbasic/goEdit.do';
+                                           location.href = '<%=basePath%>/userbasic/goIndex';
                                         },
                                        error: function () {
                                           $.alert('服务器出错!');

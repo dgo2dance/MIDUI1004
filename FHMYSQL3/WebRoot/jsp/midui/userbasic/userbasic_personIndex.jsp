@@ -15,10 +15,9 @@
     <meta name="x5-orientation" content="portrait">
      
     <link rel="stylesheet" type="text/css" href="<%=basePath%>/midui/css/index.css">    
-    <script async="" src="<%=basePath%>/midui/js/analytics.js"></script>
+    <script src="<%=basePath%>/midui/js/analytics.js"></script>
     <script type="text/javascript" src="<%=basePath%>/midui/js/jquery-2.1.4.min.js"></script>
     <script type="text/javascript" src="<%=basePath%>/midui/js/template.js"></script>
-    <script type="text/javascript" src="<%=basePath%>/midui/js/config.js"></script>
     <script type="text/javascript" src="<%=basePath%>/midui/js/utils.js"></script>
     <script type="text/javascript" src="<%=basePath%>/midui/js/fastclick.js"></script>
     <script type="text/javascript" src="<%=basePath%>/midui/js/swiper.jquery.min3.3.1.js"></script>
@@ -148,10 +147,16 @@
                 <div class="table-cell iconfont icon-right-jiantou"></div>
             </a>
             
-            <a class="user-menu table-mode" href="http://wap.feekr.com/user/favourite?id=37306">
+            <a class="user-menu table-mode" href="<%=basePath%>/userbasic/goPhotoWall.do">
                 <div class="table-cell iconfont icon-wujiaoxingkong1 txt-right"></div>
                 <div class="table-cell menu-name txt-left">照片墙
-                    
+                </div>
+                <div class="table-cell iconfont icon-right-jiantou"></div>
+            </a>
+            
+            <a class="user-menu table-mode" href="<%=basePath%>/userbasic/goPhotoLoad.do">
+                <div class="table-cell iconfont icon-wujiaoxingkong1 txt-right"></div>
+                <div class="table-cell menu-name txt-left">图片墙上传
                 </div>
                 <div class="table-cell iconfont icon-right-jiantou"></div>
             </a>
@@ -286,7 +291,7 @@
         <nav class="nav-wrap table-mode">
              <div class="table-cell">
                 
-                <a class="nav-menu nav-0" href="01.Feekr_首页.html">
+                <a class="nav-menu nav-0" href="<%=basePath%>/userbasic/goIndex.do">
                     <span class="iconfont icon-shouyenormal"></span>
                     <span class="nav-name">首页</span>
                 </a>

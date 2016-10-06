@@ -99,7 +99,7 @@ $(function () {
             location.href = "/";
           } else if(result.statusCode == '402') {
             //location.href = '/login?return=' + encodeURIComponent(redirect);
-            location.href = ' <%=basePath%>/userbasic/goLogin.do';
+            location.href = '<%=basePath%>/userbasic/goLogin.do';
           } else if(result.statusCode == '40201') {
             location.href = '/login/weixin/source/5?return=' + encodeURIComponent(redirect);
           } else if(result.statusCode == '40202') {

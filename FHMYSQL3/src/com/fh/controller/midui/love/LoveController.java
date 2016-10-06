@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import net.sf.json.JSONObject;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
@@ -66,6 +68,54 @@ public class LoveController extends BaseController {
 		mv.setViewName("save_result");
 		return mv;
 	}
+	
+	
+	/**
+	 * 新增心动操作
+	 */
+	@RequestMapping(value = "/saveLove")
+	@ResponseBody
+	public Object saveLove() throws Exception {
+		logBefore(logger, "新增saveLove");
+
+		ModelAndView mv = this.getModelAndView();
+		PageData pd = new PageData();
+		pd = this.getPageData();
+		Subject currentUser = SecurityUtils.getSubject();
+		Session session = currentUser.getSession();
+		String userbasic_id = (String) session.getAttribute("USERBASIC_ID");
+		JSONObject jsonObject=new JSONObject();
+		JSONObject jsonObjectResult=new JSONObject();
+		  
+		pd.put("LOVE_ID", this.get32UUID()); // 主键
+	//    判断是否登录
+		if (userbasic_id == null || "".equals(userbasic_id)) {
+			mv.setViewName("midui/userbasic/userbasic_login");
+			mv.addObject("msg", "login");
+			mv.addObject("msg", "success");
+			mv.setViewName("save_result");
+			
+			jsonObject.put("statusCode", "402");
+			jsonObject.put("message", "notLogin");
+			jsonObject.put("url","midui/userbasic/userbasic_login");
+		
+		} else {
+			pd.put("FROMLOVEUSER", "902e1877f6de49fbaa199fe5f7a648e3");
+			pd.put("LOVEUSER",userbasic_id);
+			pd.put("LOVETIME", Tools.date2Str(new Date())); // 心动时间
+			pd.put("NOTE1", ""); // 备注1
+			pd.put("NOTE2", ""); // 备注2
+			pd.put("ADDTIME", Tools.date2Str(new Date())); // 添加时间
+			loveService.save(pd);
+			
+			jsonObject.put("statusCode", "200");
+			jsonObject.put("message", "true");
+			jsonObject.put("result", jsonObjectResult);
+		
+		}
+		return jsonObject.toString();
+	}
+	
 	
 	/**
 	 * 删除

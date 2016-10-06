@@ -109,6 +109,14 @@
 			where 
 				USERBASIC_ID = #{USERBASIC_ID}
 	</update>
+	<!-- 修改 头像字符串 -->
+	<update id="editHeadImg" parameterType="pd">
+		update T_USERBASIC
+			set 
+				HEADIMG = #{HEADIMG}
+			where 
+				USERBASIC_ID = #{USERBASIC_ID}
+	</update>
 	
 	
 	<!-- 通过ID获取数据 -->
@@ -147,6 +155,46 @@
 			USERBASIC_ID = #{USERBASIC_ID}
 	</select>
 	
+	<!-- 通过ID获取数据 -->
+	<select id="findPersonById" parameterType="pd" resultType="pd">
+		select 
+			USERNAME,	
+			PASSWORD,	
+			REALNAME,	
+			SEX,	
+			BIRTHDAY,	
+			CITY,	
+			HIGHT,	
+			XUELI,	
+			SHOURU,	
+			WORKS,	
+			(select count(*) from t_love where LOVEUSER=USERBASIC_ID) AS XINDONG,
+			ISMARRIED,	
+			MYDESC,	
+			HEADIMG,	
+			PHONE,	
+			WEIXIN,	
+			QQ,	
+			STATUS,	
+			ADDTIME,	
+			NOTE1,	
+			NOTE2,	
+			NOTE3,	
+			NOTE4,	
+			NOTE5,	
+			NOTE6,	
+			NOTE7,	
+			NOTE8,	
+			USERBASIC_ID
+		from 
+			T_USERBASIC
+		where 
+			USERBASIC_ID = #{USERBASIC_ID}
+	</select>
+	
+	
+	
+	
 	
 	<!-- 列表 -->
 	<select id="datalistPage" parameterType="page" resultType="pd">
@@ -181,6 +229,44 @@
 		from 
 				T_USERBASIC a
 	</select>
+	
+	
+	<!-- 列表 -->
+	<select id="indexdatalistPage" parameterType="page" resultType="pd">
+		select
+				a.USERNAME,	
+				a.PASSWORD,	
+				a.REALNAME,	
+				a.SEX,	
+				a.BIRTHDAY,	
+				a.CITY,	
+				a.HIGHT,	
+				a.XUELI,	
+				a.SHOURU,	
+				a.WORKS,	
+				a.ISMARRIED,	
+				a.MYDESC,
+				(select count(0) from t_love where FROMLOVEUSER=#{pd.currentUserUUID} and LOVEUSER=a.USERBASIC_id ) as XINDONG,	
+				a.HEADIMG,	
+				a.PHONE,	
+				a.WEIXIN,	
+				a.QQ,	
+				a.STATUS,	
+				a.ADDTIME,	
+				a.NOTE1,	
+				a.NOTE2,	
+				a.NOTE3,	
+				a.NOTE4,	
+				a.NOTE5,	
+				a.NOTE6,	
+				a.NOTE7,	
+				a.NOTE8,	
+				a.USERBASIC_ID
+		from 
+				T_USERBASIC a
+	</select>
+	
+	
 	
 	<!-- 列表(全部) -->
 	<select id="listAll" parameterType="pd" resultType="pd">

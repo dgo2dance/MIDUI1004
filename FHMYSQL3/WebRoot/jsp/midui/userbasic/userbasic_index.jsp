@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%
@@ -65,6 +65,119 @@
         </nav>
     </div>
 </script>
+
+
+    
+
+    <script type="text/html" id="recommend-tpl">
+         {{if recommend.today && recommend.today.length > 0}}
+        <div class="date-title">
+            <p class="regular-font">今日</p>
+            <p class="sub-title">觅对，每天为你推荐</p>
+        </div>
+         {{each recommend.ago as v i}}
+             <div class="column-item-wrap">
+            <div class="column-info">
+                <a href="{{basePath}}userbasic/goPerson?ID={{v.USERBASIC_ID}}" class="column-item column-section" data-target="ajax">
+                    <img data-original="#" alt="" class="" src={{v.HEADIMG}} style="display: block;">
+                </a>
+            </div>
+                <div class="nickname">{{v.USERNAME}}</div>
+                <a href="#">
+                {{if v.XINDONG == 0}}
+                  <div class="avatar"><span class="iconfont icon-xin"></span>
+                </div>
+                {{else if v.XINDONG > 0}}
+                 <div class="avatar">  <span class="iconfont icon-xinshixin2"></span>
+                </div>
+                {{/if}}
+                </a>
+                <div style="clear:both"></div>
+                <div class="title regular-font tags">
+                <span>{{v.BIRTHDAY}}</span>
+                 <span>{{v.HIGHT}}</span>
+                 <span>{{v.XUELI}}</span>
+                 <span>{{v.CITY}}</span>
+                </div>
+        </div>
+        {{/each}}
+        {{/if}}
+
+        {{if recommend.yesterday && recommend.yesterday.length > 0}}
+        <div class="date-title">
+            <p class="regular-font">昨日</p>
+
+            <p class="sub-title">时间，一刻也不等人</p>
+        </div>
+         {{each recommend.ago as v i}}
+             <div class="column-item-wrap">
+            <div class="column-info">
+                <a href="{{basePath}}userbasic/goPerson?ID={{v.USERBASIC_ID}}" class="column-item column-section" data-target="ajax">
+                    <img data-original="#" alt="" class="" src={{v.HEADIMG}} style="display: block;">
+                </a>
+            </div>
+                <div class="nickname">{{v.USERNAME}}</div>
+                <a href="#">
+                {{if v.XINDONG == 0}}
+                 <div class="avatar"><span class="iconfont icon-xin"></span>
+                </div>
+                {{else if v.XINDONG  > 0}}
+                 <div class="avatar">  <span class="iconfont icon-xinshixin2"></span>
+                </div>
+                {{/if}}
+                </a>
+                <div style="clear:both"></div>
+                <div class="title regular-font tags">
+                <span>{{v.BIRTHDAY}}</span>
+                 <span>{{v.HIGHT}}</span>
+                 <span>{{v.XUELI}}</span>
+                 <span>{{v.CITY}}</span>
+                </div>
+        </div>
+        {{/each}}
+        {{/if}}
+
+
+
+
+        <div class="date-title">
+            <p class="regular-font">往期推荐</p>
+        </div>
+        {{include "ago-tpl"}}
+    </script>
+    <script id="ago-tpl" type="text/html">
+         {{if recommend.ago && recommend.ago.length > 0}}
+         {{each recommend.ago as v i}}
+             <div class="column-item-wrap">
+            <div class="column-info">
+                <a href="{{basePath}}userbasic/goPerson?ID={{v.USERBASIC_ID}}" class="column-item column-section" data-target="ajax">
+                    <img data-original="#" alt="" class="" src={{v.HEADIMG}} style="display: block;">
+                </a>
+            </div>
+                <div class="nickname">{{v.USERNAME}}</div>
+                <a href="#">
+                {{if v.XINDONG == 0}}
+                <div class="avatar"><span class="iconfont icon-xin"></span>
+                </div>
+                {{else if v.XINDONG  > 0}}
+ <div class="avatar">  <span class="iconfont icon-xinshixin2"></span>
+                </div>
+             
+                {{/if}}
+                </a>
+                <div style="clear:both"></div>
+                <div class="title regular-font tags">
+                <span>{{v.BIRTHDAY}}</span>
+                 <span>{{v.HIGHT}}</span>
+                 <span>{{v.XUELI}}</span>
+                 <span>{{v.CITY}}</span>
+                </div>
+        </div>
+        {{/each}}
+        {{/if}}
+    </script>
+    
+    
 <script>
     $(function () {
         var configData = {
@@ -121,7 +234,6 @@
                 v.path = v.path + '?pv_from=' + from[0].from + '';
                 return v;
             });
-
             $('body').append(template('nav-tpl', configData))
         }
 
@@ -137,101 +249,10 @@
             </div>
             <div class="swiper-pagination swiper-pagination-bullets"><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet swiper-pagination-bullet-active"></span></div>
         </div>
+        
         <div class="list-wrap body-space">
             <div class="item-container">
-        <div class="date-title">
-            <p class="regular-font">今日</p>
-            <p class="sub-title">觅对，每天为你推荐</p>
-        </div>
-        
-        
-        <div class="column-item-wrap">
-            <div class="column-info">
-                <a href="http://wap.feekr.com/column/article?id=k5lqmw==&amp;pv_from=symrtj" class="column-item column-section" data-target="ajax">
-                    <img data-original="http://newscover.b0.upaiyun.com/2016/09/14/23220627e80d38fba2f3d4359b87b8f0943749.jpg!600X400" alt="" class="" src="midui/images/06.jpg" style="display: block;">
-                </a>
-             
-            </div>
-             
-                <div class="nickname">WILL</div>
-                <a href="#">
-                <div class="avatar"><img src="midui/images/mi_heart@4x.png">
-                </div>
-                </a>
             
-                <div style="clear:both"></div>
-                <div class="title regular-font tags">
-                <span>23岁</span>
-                 <span>180cm</span>
-                 <span>本科</span>
-                 <span>郑州</span>
-                </div>
-           
-        </div>
-
-        
-        
-        <div class="date-title">
-            <p class="regular-font">昨日</p>
-
-            <p class="sub-title">时间，一刻也不等人</p>
-        </div>
-        
-        
-       
-        <div class="column-item-wrap">
-            <div class="column-info">
-                <a href="http://wap.feekr.com/column/article?id=k5lqmw==&amp;pv_from=symrtj" class="column-item column-section" data-target="ajax">
-                    <img data-original="http://newscover.b0.upaiyun.com/2016/09/14/23220627e80d38fba2f3d4359b87b8f0943749.jpg!600X400" alt="" class="" src="midui/images/06.jpg" style="display: block;">
-                </a>
-             
-            </div>
-             
-                <div class="nickname">WILL LIKE</div>
-                <a href="#">
-                <div class="avatar"><img src="midui/images/mi_heart@3x.png">
-                </div>
-                </a>
-            
-                <div style="clear:both"></div>
-                <div class="title regular-font tags">
-                <span>23岁</span>
-                 <span>180cm</span>
-                 <span>本科</span>
-                 <span>郑州</span>
-                </div>
-           
-        </div>
-        
-        
-        <div class="date-title">
-            <p class="regular-font">往期推荐</p>
-        </div>
-        
-        
-         <div class="column-item-wrap">
-            <div class="column-info">
-                <a href="http://wap.feekr.com/column/article?id=k5lqmw==&amp;pv_from=symrtj" class="column-item column-section" data-target="ajax">
-                    <img data-original="http://newscover.b0.upaiyun.com/2016/09/14/23220627e80d38fba2f3d4359b87b8f0943749.jpg!600X400" alt="" class="" src="midui/images/06.jpg" style="display: block;">
-                </a>
-            </div>
-             
-                <div class="nickname">WILL LIKE</div>
-                <a href="#">
-                <div class="avatar"><img src="midui/images/mi_heart@4x.png">
-                </div>
-                </a>
-            
-                <div style="clear:both"></div>
-                <div class="title regular-font tags">
-                <span>23岁</span>
-                 <span>180cm</span>
-                 <span>硕士</span>
-                 <span>郑州</span>
-                </div>
-        </div>
-    
-        
         </div>
             <div class="loading-notice" style="display: none;"><div id="global-inline-loading" class="global-inline-loading global-loading"><div class="spinner"><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div></div><span>加载中...</span></div></div>
         </div>
@@ -267,7 +288,7 @@
                 win = $(window),
                 DocHeight,
                 isScroll = true;
-                
+                var basePath="<%=basePath%>";
                 //轮播 
                   var data={};
                   data.result = {
@@ -295,12 +316,10 @@
                     autoplay: 3000,
                     autoplayDisableOnInteraction: false
                 });
-                
-            var store = sessionStorage,
-                storeData;
-                
-                
-        //  滚动加载更多
+                var store = sessionStorage,
+                 storeData;
+                 
+                     //  滚动加载更多
             function loadMore(p) {
                 win.on('scroll', function () {
                     if (isScroll) {
@@ -308,8 +327,8 @@
                         if ($(window).scrollTop() + document.documentElement.clientHeight > DocHeight - 600) {
                             isScroll = false;
                             $.getAjax({
-                                url: api.selection,
-                                data: {page: store.page},
+                                url: api.indexList,
+                                data: {page: parseInt(store.page)+1},
                                 status: false,
                                 beforeSend: function () {
                                     $('.loading-notice').inlineLoading({
@@ -322,12 +341,14 @@
                                     status: 'close'
                                 });
 
-                                if (data.result.recommend.ago.length > 0 && data.result.page) {
-                                    recommendTpl = template('ago-tpl', data.result);
+                                if (data.recommend.ago.length > 0 && data.page) {
+                                     data.basePath = basePath;
+                                    recommendTpl = template('ago-tpl', data);
                                     recommendContainer.append(recommendTpl);
-                                    store.page = data.result.page;
+
+                                    store.page = data.page;
                                     isScroll = true;
-                                    storeData.recommend.ago = storeData.recommend.ago.concat(data.result.recommend.ago);
+                               //     storeData.recommend.ago = storeData.recommend.ago.concat(data.result.recommend.ago);
 
                                     $("img.lazy").lazyload({
                                         effect: "fadeIn",
@@ -342,54 +363,29 @@
                     }
                 });
             }
+            
 
-            //        sessionStorage存储列表数据
-            $(document).on('click', 'a[data-target=ajax]', function (e) {
-                e.preventDefault();
-                var url = $(this).attr('href');
-
-                store.listData = JSON.stringify(storeData);
-//            获取当前列表位置
-                store.top = $(this).offset().top;
-                store.type = "index";
-                location.href = url;
-            });
-            //  判断是否有本地存储
-            if (store.type == "index") {
-                storeData = JSON.parse(store.listData);
-                recommendTpl = template('recommend-tpl', storeData);
-                recommendContainer.html(recommendTpl);
-
-                $.loading({
-                    status: false
-                });
-
-                $("img.lazy").lazyload({
-                    effect: "fadeIn",
-                    threshold: 200
-                }).removeClass('lazy');
-
-                setTimeout(function () {
-                    $('html, body').scrollTop(store.top - 100);
-                }, 300);
-
-            } else {
+                   
+                 
                 $.getAjax({
-                    url: api.selection
+                    url: api.indexList
                 }, function (res) {
                     var data = res;
                     storeData = $.extend(true, {}, data.result);
-                    storeData.recommend.ago = [];
-                    recommendTpl = template('recommend-tpl', data.result);
+            //        storeData.recommend.ago = [];
+                      data.basePath = basePath;
+
+                    recommendTpl = template('recommend-tpl', data);
                     recommendContainer.html(recommendTpl);
-                    store.page = data.result.page;
+                    store.page = data.page;
                     $("img.lazy").lazyload({
                         effect: "fadeIn",
                         threshold: 200
                     }).removeClass('lazy');
                 });
-            }
-            loadMore();
+                
+              loadMore();
+              
         });
     </script>
 
@@ -397,7 +393,7 @@
 <div class="nav">
         <nav class="nav-wrap table-mode">
             <div class="table-cell">
-                <a class=" nav-menu nav-0 v-link-active" href="01.Feekr_首页.html">
+                <a class=" nav-menu nav-0 v-link-active" href="<%=basePath%>userbasic/goIndex">
                     <span class="iconfont icon-shouyepressed"></span>
                     <span class="nav-name">首页</span>
                 </a>
@@ -405,7 +401,7 @@
             
             <div class="table-cell">
                 
-                <a class="nav-menu nav-3" href="05.Feekr_个人中心.html">
+                <a class="nav-menu nav-3" href="<%=basePath%>userbasic/goPersonIndex">
                     <span class="iconfont icon-wodenormal"></span>
                     <span class="nav-name">我的</span>
                 </a>

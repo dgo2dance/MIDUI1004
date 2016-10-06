@@ -60,6 +60,13 @@ public class LoveService {
 	}
 	
 	/*
+	* 通过id获取数据
+	*/
+	public PageData findByUserId(PageData pd)throws Exception{
+		return (PageData)dao.findForObject("LoveMapper.findByUserId", pd);
+	}
+	
+	/*
 	* 批量删除
 	*/
 	public void deleteAll(String[] ArrayDATA_IDS)throws Exception{

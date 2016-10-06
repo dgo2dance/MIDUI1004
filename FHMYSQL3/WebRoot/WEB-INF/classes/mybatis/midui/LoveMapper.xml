@@ -69,6 +69,19 @@
 			LOVE_ID = #{LOVE_ID}
 	</select>
 	
+		<!-- 通过ID获取数据 -->
+	<select id="findByUserId" parameterType="pd" resultType="pd">
+		select 
+			count(*) as count
+		from 
+			T_LOVE
+		where 
+			FROMLOVEUSER = #{FROMLOVEUSER}
+			and 
+			LOVEUSER = #{LOVEUSER}
+			and ISVALIDATE='T'
+	</select>
+	
 	
 	<!-- 列表 -->
 	<select id="datalistPage" parameterType="page" resultType="pd">

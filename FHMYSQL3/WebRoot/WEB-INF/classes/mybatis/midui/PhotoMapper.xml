@@ -99,4 +99,21 @@
 		</foreach>
 	</delete>
 	
+	
+	<select id="listAllByUserId" parameterType="pd" resultType="pd">
+		select
+				a.USERID,	
+				a.PHOTOPATH,	
+				a.NOTE1,	
+				a.NOTE2,	
+				a.NOTE3,	
+				a.NOTE4,	
+				a.PHOTO_ID
+		from 
+				T_PHOTO a
+			where  a.USERID =#{USERID}
+	</select>
+	
+	
+	
 </mapper>

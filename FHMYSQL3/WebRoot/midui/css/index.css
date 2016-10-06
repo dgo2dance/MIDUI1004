@@ -1,4 +1,6 @@
-/*! normalize.css v3.0.2 | MIT License | git.io/normalize */@import "http://at.alicdn.com/t/font_1468551239_3780494.css";
+/*! normalize.css v3.0.2 | MIT License | git.io/normalize */
+@import "http://at.alicdn.com/t/font_1468551239_3780494.css";
+@import "http://at.alicdn.com/t/font_1475718584_9693997.css";
 
 * {
     box-sizing: border-box;
@@ -3833,7 +3835,7 @@ button.swiper-pagination-bullet {
 }
 
 .user-wrap .user-header {
-    background: #1abc9c;
+    background: #f4c600;
     border-bottom: none;
     color: #fff
 }
@@ -5047,4 +5049,51 @@ button.swiper-pagination-bullet {
 .post-comment {
     border-right: 1px solid #E5E5E5
 }
+
+.nickName{
+	color: #ff2aaa;
+	font-size: 1.2rem;
+    border-top: 1px solid #e8e8e8;
+    padding: 1.5rem 0;
+    text-align: center;
+	}
+.tips .avatar{
+margin:auto;
+}
+.tips .avatar img{
+	width:5%;
+	display:inline;
+	padding:0.2rem;
+	}
+	
+	@media screen and (max-width:700px) {
+.tips .avatar img {
+	width:8%;
+	display:inline;
+	padding:0.2rem;
+}
+}
+
+.like .iconfont{
+	color: #eb4f38;
+    cursor: pointer;
+    font-size: 2.2rem;
+    vertical-align: middle;
+	}
+.avatar .iconfont{
+	color: #eb4f38;
+    cursor: pointer;
+    font-size: 2.5rem;
+    vertical-align: middle;
+    float:right;
+    padding:0.2rem;
+	}
+.avatar .iconfont1{
+	color: #eb4f38;
+    cursor: pointer;
+    font-size: 2.5rem;
+    vertical-align: middle;
+	}
+	
+	
 /*# sourceMappingURL=index.css.map */

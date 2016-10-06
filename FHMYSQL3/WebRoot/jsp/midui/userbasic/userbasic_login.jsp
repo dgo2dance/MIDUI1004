@@ -212,11 +212,11 @@
                         },
                     dataType:'json',
                     cache: false,
-                     beforeSend: function () {
+                     /*beforeSend: function () {
                             $.loading({
                                 text: '登录中...'
                             })
-                     },
+                     },*/
                     success: function(data){
                         if("1" == data.result){
                             location.href = '<%=basePath%>/userbasic/goPersonIndex.do';

@@ -53,6 +53,13 @@ public class PhotoService {
 	}
 	
 	/*
+	 *列表(全部)
+	 */
+	public List<PageData> listAllByUserId(PageData pd)throws Exception{
+		return (List<PageData>)dao.findForList("PhotoMapper.listAllByUserId", pd);
+	}
+	
+	/*
 	* 通过id获取数据
 	*/
 	public PageData findById(PageData pd)throws Exception{

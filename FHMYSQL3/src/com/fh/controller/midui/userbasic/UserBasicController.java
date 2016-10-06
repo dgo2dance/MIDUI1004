@@ -16,7 +16,6 @@ import net.sf.json.JSONObject;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
-
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.WebDataBinder;
@@ -27,14 +26,14 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.fh.controller.base.BaseController;
 import com.fh.entity.Page;
-import com.fh.entity.system.User;
-import com.fh.util.AppUtil;
-import com.fh.util.ObjectExcelView;
-import com.fh.util.Const;
-import com.fh.util.PageData;
-import com.fh.util.Tools;
-import com.fh.util.Jurisdiction;
+import com.fh.service.midui.love.LoveService;
+import com.fh.service.midui.photo.PhotoService;
 import com.fh.service.midui.userbasic.UserBasicService;
+import com.fh.util.AppUtil;
+import com.fh.util.Const;
+import com.fh.util.Jurisdiction;
+import com.fh.util.ObjectExcelView;
+import com.fh.util.PageData;
 
 /** 
  * 类名称：UserBasicController
@@ -49,7 +48,14 @@ public class UserBasicController extends BaseController {
 	@Resource(name="userbasicService")
 	private UserBasicService userbasicService;
 	
+	@Resource(name="photoService")
+	private PhotoService photoService;
+	
+	@Resource(name="loveService")
+	private LoveService loveService;
+	
 	private static final String LOGINURL="midui/userbasic/userbasic_login";
+	private static final String USERBASIC_ID="USERBASIC_ID";
 	  
 	/**
 	 * 个人中心
@@ -72,13 +78,112 @@ public class UserBasicController extends BaseController {
 		return mv;
 	}
 	
-	
+
 	/**
-	 * 个人中心
+	 * 进入个人详情页面
 	 * @return
 	 */
-	@RequestMapping(value="/goHeadImg")
-	public ModelAndView goHeadImg(){
+	@RequestMapping(value="/goPerson")
+	public ModelAndView goPerson(){
+		ModelAndView mv = this.getModelAndView();
+		try {
+			PageData pd=userbasicService.getUserBasic();
+
+				mv.addObject("pd", pd);
+				mv.setViewName("midui/userbasic/userbasic_person");
+
+		} catch (Exception e) {
+			logger.error(e.toString(), e);
+		}						
+		return mv;
+	}
+	
+	/**
+	 * 个人详情页面
+	 * 
+	 * @return
+	 */
+	@RequestMapping(value = "/personInfo")
+	@ResponseBody
+	public Object personInfo() {
+		ModelAndView mv = this.getModelAndView();
+		JSONObject jsonObjectDetail = new JSONObject();
+		JSONObject jsonObject = new JSONObject();
+		PageData pd = new PageData();
+		pd = this.getPageData();
+		String uuId = pd.getString("USERBASIC_ID");
+		try {
+			pd = userbasicService.findPersonById(pd);
+			jsonObjectDetail.put("detail", pd);
+			Map<String, String> map = new HashMap<String, String>();
+			// 如果没有登录
+			Subject currentUser = SecurityUtils.getSubject();
+			Session session = currentUser.getSession();
+			String userbasic_id = (String) session.getAttribute("USERBASIC_ID");
+			if (userbasic_id == null || "".equals(userbasic_id)) {
+				map.put("isLiked", "false");
+				map.put("likeCount", "0");
+				map.put("isLoved", "false");
+			} else {
+				// 放入action
+				// isLiked likeCount isLoved
+				map.put("isLiked", "true");
+				map.put("likeCount", "100");
+				// 查询是否存在心动的
+				PageData pdLove = new PageData();
+				pdLove.put("FROMLOVEUSER", userbasic_id);
+				pdLove.put("LOVEUSER", uuId);
+				PageData lovepd = loveService.findByUserId(pdLove);
+				if ((Long) lovepd.get("count") > 0) {
+					map.put("isLoved", "true");
+				} else {
+					map.put("isLoved", "false");
+				}
+			}
+			jsonObjectDetail.put("action", map);
+			jsonObject.element("statusCode", "200");
+			jsonObject.element("result", jsonObjectDetail);
+			return new String(jsonObject.toString().getBytes("utf-8"),
+					"iso-8859-1");
+		} catch (Exception e) {
+			logger.error(e.toString(), e);
+		}
+		return "";
+	}
+	
+	/**
+	 * 图片墙
+	 * @return
+	 */
+	@RequestMapping(value="/goPhotoWall")
+	public ModelAndView goPhotoWall(){
+		ModelAndView mv = this.getModelAndView();
+		try {
+			PageData pd=userbasicService.getUserBasic();
+			if(pd==null){
+				mv.setViewName(LOGINURL);
+			}else{
+				
+				PageData photoPD=new PageData();
+				photoPD.put("USERID", pd.get(USERBASIC_ID));
+				List<PageData> photoList=photoService.listAllByUserId(photoPD);
+				 mv.addObject("pd", pd);
+				 mv.addObject("varList", photoList);
+				mv.setViewName("midui/userbasic/userbasic_photoWall2");
+			}
+		} catch (Exception e) {
+			logger.error(e.toString(), e);
+		}						
+		return mv;
+	}
+	
+	
+	/**
+	 * 图片上传
+	 * @return
+	 */
+	@RequestMapping(value="/goPhotoLoad")
+	public ModelAndView goPhotoLoad(){
 		ModelAndView mv = this.getModelAndView();
 		try {
 			PageData pd=userbasicService.getUserBasic();
@@ -86,7 +191,7 @@ public class UserBasicController extends BaseController {
 				mv.setViewName(LOGINURL);
 			}else{
 				mv.addObject("pd", pd);
-				mv.setViewName("midui/userbasic/userbasic_headImg");
+				mv.setViewName("midui/userbasic/userbasic_photoLoad");
 			}
 		} catch (Exception e) {
 			logger.error(e.toString(), e);
@@ -95,27 +200,44 @@ public class UserBasicController extends BaseController {
 	}
 	 
 	/**
-	 * 保持图片
+	 * 保存图片
 	 * @return
 	 */
-	@RequestMapping(value="/headImgSave")
+	@RequestMapping(value="/photoLoadSave")
 	@ResponseBody
-	public Object headImgSave(){
-		String result="0";
+	public Object photoLoadSave(){
+		JSONObject jsonObject=new JSONObject();
 		try{
 			PageData pd   = this.getPageData();
-			//userbasicService.edit(pd);
-			System.out.println(pd.toString());
-			result="1";
+			if(pd.containsKey("headImg")){
+				String headImg=pd.getString("headImg");
+				String imgName= Base64Img.GenerateTOImage(headImg);
+				PageData photo = new PageData();
+				String photo_id=this.get32UUID();
+				System.out.println(photo_id);
+				       photo.put("PHOTO_ID",photo_id);	//主键
+				       PageData loginUser=userbasicService.getUserBasic();
+						photo.put("USERID",loginUser.get("USERBASIC_ID"));
+						photo.put("PHOTOPATH",imgName);
+						photo.put("NOTE1", "");	//备用1
+						photo.put("NOTE2", "");	//备用2
+						photo.put("NOTE3", "");	//备用3
+						photo.put("NOTE4", "");	//备用4
+				photoService.save(photo);
+				jsonObject.element("code", "200");
+				jsonObject.element("result",imgName);
+			}
+			 
 		} catch(Exception e){
-			logger.error(e.toString(), e);
+		    jsonObject.element("code", "500");
+			e.printStackTrace();
+		   logger.error(e.toString(), e);
 		}
-		JSONObject jsonObject=new JSONObject();
-		jsonObject.element("statusCode", "200");
-		jsonObject.element("result",result);
 		return jsonObject.toString();
 		
 	}
+	
+	
 	
 	
 	/**
@@ -164,8 +286,6 @@ public class UserBasicController extends BaseController {
 		    }else{
 		    	info="0";	
 		    }
-		    System.out.println("-----");
-			   
 		} catch(Exception e){
 			info="0";
 			logger.error(e.toString(), e);
@@ -226,31 +346,7 @@ public class UserBasicController extends BaseController {
 		return  AppUtil.returnObject(new PageData(), map);
 	}
 	
-	
-	
-	/**
-	 * 判断是否已经登录
-	 * @return
-	 */
-	private  boolean islogin(){
-		//ModelAndView mv = this.getModelAndView();
-		try {
-			 Subject currentUser = SecurityUtils.getSubject();  
-			 Session session = currentUser.getSession();
-			 String  userbasic_id  =(String)session.getAttribute("USERBASIC_ID");
-			 if(userbasic_id==null || "".equals(userbasic_id)){
-				 //mv.setViewName("midui/userbasic/userbasic_login");
-				 //mv.addObject("msg", "login");
-			  }else{
-				 return true; 
-			  }
-			 
-		} catch (Exception e) {
-			 e.printStackTrace();
-		}
-		return false;
-	}
-	
+	 
 	
 	/**
 	 * 编辑个人信息
@@ -259,23 +355,18 @@ public class UserBasicController extends BaseController {
 	@RequestMapping(value="/goEditDetail")
 	public ModelAndView goEditDetail(){
 		ModelAndView mv = this.getModelAndView();
-		//pd = this.getPageData();
 		try {
-			 Subject currentUser = SecurityUtils.getSubject();  
-			 Session session = currentUser.getSession();
-			 //"902e1877f6de49fbaa199fe5f7a648e3";//
-			  String  userbasic_id  =(String)session.getAttribute("USERBASIC_ID");
-			  if(userbasic_id==null || "".equals(userbasic_id)){
-				  mv.setViewName("midui/userbasic/userbasic_login");
-				    mv.addObject("msg", "login");
+			
+			PageData pd=userbasicService.getUserBasic();
+			if(pd==null){
+				mv.setViewName(LOGINURL);
+				mv.addObject("msg", "login");
+			 
 			  }else{
-				  System.out.println("-------userbasic_id---------"+userbasic_id);
-				  PageData pd = new PageData();
-				  pd.put("USERBASIC_ID", userbasic_id);
-			       PageData loginUser=userbasicService.findById(pd);
+				  
 					mv.setViewName("midui/userbasic/userbasic_editDetail");
 					mv.addObject("msg", "editDetailSave");
-					mv.addObject("pd", loginUser);
+					mv.addObject("pd", pd);
 			  }
 			  
 		} catch (Exception e) {
@@ -292,22 +383,34 @@ public class UserBasicController extends BaseController {
 	@ResponseBody
 	public Object editDetailSave(){
 		String result="0";
+		JSONObject jsonObject = new JSONObject();
 		try{
+		 //HttpServletRequest req = ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getRequest(); 
+		 //HttpServletResponse resp = ((ServletWebRequest)RequestContextHolder.getRequestAttributes()).getResponse();
 			PageData pd   = this.getPageData();
+			if(pd.containsKey("headImg")){
+				String headImg=pd.getString("headImg");
+				result = Base64Img.GenerateTOImage(headImg);
+				jsonObject.element("result",result);
+				PageData HeadPD=new PageData();	
+					HeadPD.put("HEADIMG",result);
+					//System.out.println("------ZBF00000-----"+pd.get("USERBASIC_ID"));
+					HeadPD.put("USERBASIC_ID",pd.get("USERBASIC_ID"));
+				userbasicService.editHeadImg(HeadPD);
+				
+			}else{
+				userbasicService.edit(pd);	
+				jsonObject.element("statusCode", "200");
+				jsonObject.element("result","1");
+			}
 			//pd.put("ISMARRIED", "");
-			userbasicService.edit(pd);
-			System.out.println(pd.toString());
-			result="1";
+			//System.out.println(pd.toString());
 		} catch(Exception e){
 			logger.error(e.toString(), e);
 		}
-		JSONObject jsonObject=new JSONObject();
-		jsonObject.element("statusCode", "200");
-		jsonObject.element("result",result);
-		return jsonObject.toString();
 		
+		return jsonObject.toString();
 	}
-	
 	
 	
 	
@@ -456,6 +559,59 @@ public class UserBasicController extends BaseController {
 		}
 		return mv;
 	}
+	
+	/**
+	 * 首页列表
+	 */
+	@RequestMapping(value="/indexList")
+	@ResponseBody
+	public String indexList(Page page){
+		logBefore(logger, "列表UserBasic");
+		//if(!Jurisdiction.buttonJurisdiction(menuUrl, "cha")){return null;} //校验权限
+		ModelAndView mv = this.getModelAndView();
+		PageData pd = new PageData();
+        JSONObject jsonObject=new JSONObject();
+        //响应到前台为utf-8
+		try{
+			pd = this.getPageData();
+			System.out.println("page---------"+pd.get("page"));
+			
+			
+			//设置当前登录用户ID
+			pd.put("currentUserUUID","902e1877f6de49fbaa199fe5f7a648e3");
+			page.setPd(pd);
+			
+			//设置当前页
+			if(null!=pd.get("page")){
+			page.setCurrentPage(Integer.parseInt((String) pd.get("page")));
+			}
+			
+			
+			JSONObject jsonObjectRem=new JSONObject();
+			//今天推荐
+			List<PageData>	varListToday = userbasicService.indexlist(page);
+			
+			//昨天推荐
+			List<PageData>	varListYesterday = userbasicService.indexlist(page);
+			
+			//往期推荐
+			List<PageData>	varListAgo = userbasicService.indexlist(page);	//列出UserBasic列表
+			
+			
+			jsonObjectRem.put("today", varListToday);
+			jsonObjectRem.put("yesterday", varListYesterday);
+	        jsonObjectRem.put("ago", varListAgo);
+			jsonObject.element("statusCode", "200");
+			jsonObject.element("recommend",jsonObjectRem);
+			jsonObject.element("page",page.getCurrentPage());
+
+			return new String(jsonObject.toString().getBytes("utf-8"),"iso-8859-1") ;
+		} catch(Exception e){
+			logger.error(e.toString(), e);
+		}
+		return "" ;
+		}
+	
 	
 	/**
 	 * 去修改页面
